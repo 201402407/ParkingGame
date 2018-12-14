@@ -59,6 +59,7 @@ void setGround() {
 	glTranslatef(-450.0f, -300.0f, 0.0); // 카메라 시점을 줄인 만큼 위치도 같은 만큼 - 해서 Translate 시킨다.
 	glRotatef(90, 0.0, 1.0, 0.0);
 	terrain->RenderTerrain(cam.eye.x, cam.eye.z);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
+	//hField.Render();
 	glPopMatrix();
 }
 void display(void) {
@@ -68,8 +69,8 @@ void display(void) {
 	// Perspective -> 사람의 눈이라고 가정. 볼 수 있는 각도 및 볼 수 있는 거리.
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//printf("%.2f, %.2f, %.2f \n", nx, ny, nz);
-	gluPerspective(120, 1.0f, 0.1f, 99999);
+	printf("%.2f, %.2f, %.2f \n", nx, ny, nz);
+	gluPerspective(120, 1.0f, 0.1f, 99999); // 최대 값 설정 -> 배경이 안끝나게
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -185,11 +186,11 @@ void pressKey(int key, int x, int y) {
 		//cam.pitch(-0.5);
 		break;
 	case GLUT_KEY_F3:
-		ny += 1;
+		ny += 150;
 		//cam.yaw(0.5);
 		break;
 	case GLUT_KEY_F4:
-		ny -= 1;
+		ny -= 50;
 		//cam.yaw(-0.5);
 		printf("F4");
 		break;
@@ -201,17 +202,17 @@ void pressKey(int key, int x, int y) {
 		nz -= 1;
 		//cam.roll(-0.5);
 		break;
-	case GLUT_KEY_UP:
-		ny += 1;
-		break;
-	case GLUT_KEY_DOWN:
-		ny -= 5;
-		break;
-	case GLUT_KEY_LEFT:
+	case GLUT_KEY_UP: // 앞으로 이동
 		nz += 5;
 		break;
-	case GLUT_KEY_RIGHT:
+	case GLUT_KEY_DOWN: // 뒤로 이동
 		nz -= 5;
+		break;
+	case GLUT_KEY_LEFT: // 왼쪽 이동
+		nx += 5;
+		break;
+	case GLUT_KEY_RIGHT: // 오른쪽 이동
+		nx -= 5;
 		break;
 	}
 	glutPostRedisplay();// 다시그리기

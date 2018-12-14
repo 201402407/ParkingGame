@@ -1,7 +1,7 @@
 #include "include.h"
 #include "skybox.h"
 
-#define TEX_SIZE 350
+#define TEX_SIZE GL_MAX_VERTEX_ATOMIC_COUNTER_BUFFERS // ÃÖ´ë °ª.
 #define GL_CLAMP_TO_EDGE 0x812F
 
 const char *texFiles[6] = {
@@ -12,10 +12,6 @@ const char *texFiles[6] = {
 	"up.bmp",
 	"down.bmp"
 };
-
-float Skybox::getBoxSize() {
-	return TEX_SIZE * 2;
-}
 
 Skybox::Skybox(void) {
 	for (int i = 0; i<6; i++)
