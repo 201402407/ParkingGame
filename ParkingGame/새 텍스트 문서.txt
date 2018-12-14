@@ -1,0 +1,6 @@
+posz : front
+negx : left
+posy: up
+posx: right
+negy:down
+negz:back
