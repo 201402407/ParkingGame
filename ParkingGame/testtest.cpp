@@ -45,8 +45,9 @@ void camera(void) {
 /* 배경화면 SkyBox 생성 함수 */
 void setBackGround() {
 	glPushMatrix();
-	printf("%.2f , %.2f , %.2f \n", nx, ny, nz);
+	
 	glRotatef(90, 0.0, 1.0, 0.0);
+	//glScalef(2.0f, 2.0f, 2.0f);
 	skybox->draw(); // 스카이박스 생성
 					//hField.Render();
 	glPopMatrix();
@@ -63,19 +64,18 @@ void setGround() {
 void display(void) {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	/* 투상좌표 설정*/
+	/* VIEW 설정 */
 	glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//gluPerspective(120, 1.0, 1, 10);
-
-	/* 모델좌표 설정 */
+	printf("%.2f, %.2f, %.2f", nx, ny, nz);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
+	gluLookAt(nx, ny, nz, nx, ny, 0, 0, 1, 0);
 	/* 기본 설정 */
 	glShadeModel(GL_SMOOTH);
-	gluLookAt(nx, ny, nz, 0, 0, 0, 0, 1, 0);
-	glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
+	// 깊이버퍼, 후면제거활성화
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	//glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
 
 	/* 배경 생성 */
 	setBackGround();
@@ -173,25 +173,32 @@ void reshape(int w, int h) {
 void pressKey(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_F1:
-		nx += 50;
+		nx += 1;
+		//cam.pitch(0.5);
 		break;
 	case GLUT_KEY_F2:
-		nx -= 50;
+		nx -= 1;
+		//cam.pitch(-0.5);
 		break;
 	case GLUT_KEY_F3:
-		ny += 50;
+		ny += 1;
+		//cam.yaw(0.5);
 		break;
 	case GLUT_KEY_F4:
-		ny -= 50;
+		ny -= 1;
+		//cam.yaw(-0.5);
+		printf("F4");
 		break;
 	case GLUT_KEY_F5:
-		nz += 50;
+		nz += 1;
+		//cam.roll(0.5);
 		break;
 	case GLUT_KEY_F6:
-		nz -= 50;
+		nz -= 1;
+		//cam.roll(-0.5);
 		break;
 	case GLUT_KEY_UP:
-		ny += 5;
+		ny += 1;
 		break;
 	case GLUT_KEY_DOWN:
 		ny -= 5;
@@ -203,6 +210,7 @@ void pressKey(int key, int x, int y) {
 		nz -= 5;
 		break;
 	}
+	glutPostRedisplay();// 다시그리기
 }
 
 int main(int argc, char **argv) {
@@ -222,20 +230,19 @@ int main(int argc, char **argv) {
 	skybox = new Skybox();
 	// Terrain, Skybox객체
 	terrain = new Terrain("background.raw", "down.bmp", 1024, 1024);
-	// 뷰포트와 카메라 설정
+	// 뷰포트와 카메라 설정 (카메라 설정 함수 내부에 이미 PERSPECTIVE와 MODELVIEW 설정을 할 수 있게 했다.)
+	/*
 	cam.set(4, 4, 4, 0, 0, 0, 0, 1, 0);
-	cam.setShape(60.0f, 64.0f / 48.0f, 0.5f, 1000.0f);
-
+	cam.setShape(120.0f, 64.0f / 48.0f, 0.5f, 2000.0f);
+	printf("%.2f, %.2f, %.2f", cam.eye.x, cam.eye.y, cam.eye.z);
 	// 카메라의 초기위치와 회전각
 	// 설정을 마친 카메라가 처음에 어디에서 어디를 보고있을지 결정
 	cam.slide(0, 100, 0);
 	cam.roll(0);
-	cam.yaw(180);
+	cam.yaw(10);
 	cam.pitch(45);
+	*/
 	glutSpecialFunc(pressKey);
-	// 깊이버퍼, 후면제거활성화
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 
 	glutMainLoop();
 	return 0;

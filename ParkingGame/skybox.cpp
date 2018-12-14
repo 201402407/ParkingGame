@@ -1,7 +1,7 @@
 #include "include.h"
 #include "skybox.h"
 
-#define TEX_SIZE 950
+#define TEX_SIZE 350
 #define GL_CLAMP_TO_EDGE 0x812F
 
 const char *texFiles[6] = {
