@@ -137,6 +137,7 @@
     <ClInclude Include="..\..\..\..\..\Downloads\Dx11Terrain_01\TerrainClass.h" />
     <ClInclude Include="..\..\..\..\..\Downloads\OpenGL-Skybox-master\OpenGL-Skybox-master\OpenGL-Skybox\OpenGL-Skybox\terrain.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="car.h" />
     <ClInclude Include="ground.h" />
     <ClInclude Include="heightfield.h" />
     <ClInclude Include="include.h" />
@@ -147,6 +148,7 @@
     <ClCompile Include="..\..\..\..\..\Downloads\Dx11Terrain_01\TerrainClass.cpp" />
     <ClCompile Include="..\..\..\..\..\Downloads\OpenGL-Skybox-master\OpenGL-Skybox-master\OpenGL-Skybox\OpenGL-Skybox\terrain.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="car.cpp" />
     <ClCompile Include="heightfield.cpp" />
     <ClCompile Include="jpeg.cpp" />
     <ClCompile Include="skybox.cpp" />

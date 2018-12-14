@@ -5,13 +5,16 @@
 #include "camera.h"
 #include "heightfield.h"
 #include "skybox.h"
+#include "car.h"
 #include "terrain.h"
 #pragma comment(lib,"glew32.lib")
 
+#define PI 3.142
+
 // 카메라 위치
 float nx = 0;
-float ny = 0;
-float nz = 1;
+float ny = 300;
+float nz = 1000;
 
 float xpos = 85.078, ypos = 351.594, zpos = 281.033, xrot = 758, yrot = 90, angle = 0.0;
 float lastx, lasty;
@@ -30,7 +33,7 @@ Skybox* skybox;	//스카이박스
 Camera cam;	//카메라
 CCamera objCamera;
 Terrain* terrain;	//지형
-
+Car* car; // 자동차
 
 void camera(void) {
 	int posX = (int)xpos;
@@ -62,7 +65,9 @@ void setGround() {
 	//hField.Render();
 	glPopMatrix();
 }
+
 void display(void) {
+	
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	/* VIEW 설정 */
@@ -88,6 +93,11 @@ void display(void) {
 	/* 바닥 생성 */
 	setGround();
 
+	/* 자동차 생성 */
+	glTranslatef(0.0, 1.0, 0.0);
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glScalef(0.5, 0.5, 0.5);
+	car->drawCar();
 	glutSwapBuffers();
 }
 
@@ -232,9 +242,11 @@ int main(int argc, char **argv) {
 	glutKeyboardFunc(myKeyboard);
 	glutKeyboardUpFunc(myKeyboardUp);
 
+	// 자동차 객체
+	car = new Car();
 	skybox = new Skybox();
 	// Terrain, Skybox객체
-	terrain = new Terrain("background.raw", "down.bmp", 1024, 1024);
+	terrain = new Terrain("map2.raw", "down.bmp", 1024, 1024);
 	// 뷰포트와 카메라 설정 (카메라 설정 함수 내부에 이미 PERSPECTIVE와 MODELVIEW 설정을 할 수 있게 했다.)
 	/*
 	cam.set(4, 4, 4, 0, 0, 0, 0, 1, 0);
