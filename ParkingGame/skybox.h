@@ -3,7 +3,7 @@ public:
 	Skybox();
 	~Skybox();
 	void draw();
-
+	float getBoxSize();
 private:
 	typedef unsigned int uint;
 	typedef const char * pcStr;

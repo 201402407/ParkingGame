@@ -65,11 +65,15 @@ void display(void) {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	/* VIEW 설정 */
+	// Perspective -> 사람의 눈이라고 가정. 볼 수 있는 각도 및 볼 수 있는 거리.
 	glMatrixMode(GL_PROJECTION);
-	printf("%.2f, %.2f, %.2f", nx, ny, nz);
+	glLoadIdentity();
+	//printf("%.2f, %.2f, %.2f \n", nx, ny, nz);
+	gluPerspective(120, 1.0f, 0.1f, 99999);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(nx, ny, nz, nx, ny, 0, 0, 1, 0);
+	gluLookAt(nx, ny, nz, 0, 0, 0, 0, 1, 0);
 	/* 기본 설정 */
 	glShadeModel(GL_SMOOTH);
 	// 깊이버퍼, 후면제거활성화

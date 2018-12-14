@@ -13,6 +13,10 @@ const char *texFiles[6] = {
 	"down.bmp"
 };
 
+float Skybox::getBoxSize() {
+	return TEX_SIZE * 2;
+}
+
 Skybox::Skybox(void) {
 	for (int i = 0; i<6; i++)
 		textures[i] = _loadTexture(texFiles[i]);
