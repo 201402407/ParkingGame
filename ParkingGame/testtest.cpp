@@ -10,8 +10,8 @@
 
 // 카메라 위치
 float nx = 0;
-float ny = 450;
-float nz = 700;
+float ny = 0;
+float nz = 1;
 
 float xpos = 85.078, ypos = 351.594, zpos = 281.033, xrot = 758, yrot = 90, angle = 0.0;
 float lastx, lasty;
@@ -42,33 +42,47 @@ void camera(void) {
 	printf("%.2f , %.2f , %.2f \n", xpos, ypos, zpos);
 }
 
+/* 배경화면 SkyBox 생성 함수 */
+void setBackGround() {
+	glPushMatrix();
+	printf("%.2f , %.2f , %.2f \n", nx, ny, nz);
+	glRotatef(90, 0.0, 1.0, 0.0);
+	skybox->draw(); // 스카이박스 생성
+					//hField.Render();
+	glPopMatrix();
+}
+
+/* 바닥 생성 함수 */
+void setGround() {
+	glPushMatrix();
+	glTranslatef(-450.0f, -300.0f, 0.0); // 카메라 시점을 줄인 만큼 위치도 같은 만큼 - 해서 Translate 시킨다.
+	glRotatef(90, 0.0, 1.0, 0.0);
+	terrain->RenderTerrain(cam.eye.x, cam.eye.z);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
+	glPopMatrix();
+}
 void display(void) {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	/* 투상좌표 설정*/
 	glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//gluPerspective(120, 1.0, 1, 10);
+
+	/* 모델좌표 설정 */
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	/* 기본 설정 */
 	glShadeModel(GL_SMOOTH);
 	gluLookAt(nx, ny, nz, 0, 0, 0, 0, 1, 0);
-	//glTranslated(-xpos, -ypos, -zpos);
-	//camera();
 	glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
-	glPushMatrix();
-//	glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
-	//camera();
-	printf("%.2f , %.2f , %.2f \n", nx,ny,nz);
-	skybox->draw(); // 스카이박스 생성
-	//hField.Render();
-	glPushMatrix();
-	glTranslatef(0, -50, 0);
-	//glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
-	
-	glRotatef(90, 0.0, 1.0, 0.0);
-	terrain->RenderTerrain(0, 0);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
-	//terrain->RenderTerrain(cam.eye.x, cam.eye.z);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
-	glPopMatrix();
-	glPopMatrix();
-	//glPopMatrix();
+
+	/* 배경 생성 */
+	setBackGround();
+
+	/* 바닥 생성 */
+	setGround();
+
 	glutSwapBuffers();
 }
 
