@@ -1,5 +1,3 @@
-﻿  testtest.cpp
-testtest.cpp(12): warning C4005: 'PI': 매크로 재정의
-  c:\users\administrator\documents\visual studio 2015\projects\parkinggame\parkinggame\car.h(7): note: 'PI'의 이전 정의를 참조하십시오.
+﻿  car.cpp
   ParkingGame.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\ParkingGame\OpenGL_Debug\ParkingGame.exe
   ParkingGame.vcxproj -> C:\Users\Administrator\Documents\Visual Studio 2015\Projects\ParkingGame\OpenGL_Debug\ParkingGame.pdb (Full PDB)

@@ -9,11 +9,9 @@
 #include "terrain.h"
 #pragma comment(lib,"glew32.lib")
 
-#define PI 3.142
-
 // 카메라 위치
 float nx = 0;
-float ny = 300;
+float ny = 800;
 float nz = 1000;
 
 float xpos = 85.078, ypos = 351.594, zpos = 281.033, xrot = 758, yrot = 90, angle = 0.0;
@@ -74,7 +72,7 @@ void display(void) {
 	// Perspective -> 사람의 눈이라고 가정. 볼 수 있는 각도 및 볼 수 있는 거리.
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	printf("%.2f, %.2f, %.2f \n", nx, ny, nz);
+	//printf("%.2f, %.2f, %.2f \n", nx, ny, nz);
 	gluPerspective(120, 1.0f, 0.1f, 99999); // 최대 값 설정 -> 배경이 안끝나게
 
 	glMatrixMode(GL_MODELVIEW);
@@ -91,13 +89,14 @@ void display(void) {
 	setBackGround();
 
 	/* 바닥 생성 */
-	setGround();
-
+	//setGround();
+	
 	/* 자동차 생성 */
-	glTranslatef(0.0, 1.0, 0.0);
+	glTranslatef(0.0, 160.0, 480.0);
 	glRotatef(90, 0.0, 1.0, 0.0);
-	glScalef(0.5, 0.5, 0.5);
+	glScalef(1.5, 1.5, 1.5);
 	car->drawCar();
+	
 	glutSwapBuffers();
 }
 
@@ -213,16 +212,16 @@ void pressKey(int key, int x, int y) {
 		//cam.roll(-0.5);
 		break;
 	case GLUT_KEY_UP: // 앞으로 이동
-		nz += 5;
+		nz += 50;
 		break;
 	case GLUT_KEY_DOWN: // 뒤로 이동
-		nz -= 5;
+		nz -= 50;
 		break;
 	case GLUT_KEY_LEFT: // 왼쪽 이동
-		nx += 5;
+		nx += 50;
 		break;
 	case GLUT_KEY_RIGHT: // 오른쪽 이동
-		nx -= 5;
+		nx -= 50;
 		break;
 	}
 	glutPostRedisplay();// 다시그리기

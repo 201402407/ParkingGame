@@ -1,6 +1,6 @@
 #include "include.h"
 #include "heightfield.h"
-
+#pragma once
 GLUquadricObj *solar[3];
 GLuint textureMapping[3]; //텍스쳐 맵핑 변수
 AUX_RGBImageRec *textureBMPImg;

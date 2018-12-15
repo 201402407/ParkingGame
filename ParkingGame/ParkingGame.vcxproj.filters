@@ -33,13 +33,13 @@
     <ClInclude Include="heightfield.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="jpeg.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\..\Downloads\OpenGL-Skybox-master\OpenGL-Skybox-master\OpenGL-Skybox\OpenGL-Skybox\terrain.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="car.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,13 +62,13 @@
     <ClCompile Include="testtest.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="jpeg.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\..\Downloads\OpenGL-Skybox-master\OpenGL-Skybox-master\OpenGL-Skybox\OpenGL-Skybox\terrain.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="car.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

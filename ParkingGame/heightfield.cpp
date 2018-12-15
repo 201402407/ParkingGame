@@ -1,5 +1,5 @@
 #include "include.h"
-#include "jpeg.h"
+#include "texture.h"
 #include "heightfield.h"
 
 bool SwiftHeightField::Create(char *hFileName, const int hWidth, const int hHeight) {
