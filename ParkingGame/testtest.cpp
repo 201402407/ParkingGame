@@ -89,7 +89,7 @@ void display(void) {
 	setBackGround();
 
 	/* 바닥 생성 */
-	//setGround();
+	setGround();
 	
 	/* 자동차 생성 */
 	glTranslatef(0.0, 160.0, 480.0);

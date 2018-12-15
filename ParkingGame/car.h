@@ -4,7 +4,7 @@ public:
 	~Car();
 	void drawCar();
 
-	AUX_RGBImageRec *textureImg[8];
+	AUX_RGBImageRec *textureImg[9];
 private:
 	#define PI 3.1492
 	typedef unsigned int uint;

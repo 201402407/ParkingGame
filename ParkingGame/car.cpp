@@ -1,12 +1,12 @@
 #include "include.h"
 #include "car.h"
 
-const char *BMPFile[8] = { "carup.bmp", "carbackup.bmp", "carbackdown.bmp", "carfrontup.bmp", 
-"carfrontdown.bmp", "carleftup.bmp", "carleftdown.bmp", "carwheel.bmp", };
+const char *BMPFile[9] = { "carup.bmp", "carbackup.bmp", "carbackdown.bmp", "carfrontup.bmp",
+"carfrontdown.bmp", "carleftup.bmp", "carleftdown.bmp", "carwheel.bmp", "carfrontmiddle.bmp" };
 
 Car::Car(void) {
 	//Car::doTexture();
-	for (int i = 0; i<8; i++)
+	for (int i = 0; i<9; i++)
 		textures[i] = Car::_loadTexture(BMPFile[i]);
 }
 Car::~Car(void) {}
@@ -34,16 +34,26 @@ Car::uint Car::_loadTexture(pcStr filename) {
 }
 
 void Car::carFront() {
-	/*
-	glColor3f(1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+
+	/* 앞면의 밑 */
+//	glColor3f(1, 0, 0);
 	glPushMatrix();
-	glTranslatef(-450, -250, 0);
+	glTranslatef(820, -250, 0);
+//	glRotatef(8, 0, 0, 1);
 	glScalef(0.01, 0.3, 0.85);
 	//glutSolidCube(600);
-	glColor3f(1, 0, 0);
+
+	glBindTexture(GL_TEXTURE_2D, textures[4]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0, 1.0); glVertex3f(550, 450, 300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(550, -450, 300);
+	glTexCoord2f(0.0, 0.0); glVertex3f(550, -450, -300);
+	glTexCoord2f(0.0, 1.0); glVertex3f(550, 450, -300);
+	glEnd();
 	//glutSolidCube(600);
 	glPopMatrix();
-	*/
+	
 	/* 앞면의 앞 */
 	glPushMatrix();
 	glTranslatef(1000, -155, 0);
@@ -51,12 +61,12 @@ void Car::carFront() {
 	glScalef(0.01, 0.4, 0.85);
 	glEnable(GL_TEXTURE_2D);
 
-	glBindTexture(GL_TEXTURE_2D, textures[7]);
+	glBindTexture(GL_TEXTURE_2D, textures[8]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(1.0, 1.0); glVertex3f(400, 1250, 300);
+	glTexCoord2f(1.0, 1.0); glVertex3f(400, 1200, 300);
 	glTexCoord2f(1.0, 0.0); glVertex3f(550, 450, 300);
 	glTexCoord2f(0.0, 0.0); glVertex3f(550, 450, -300);
-	glTexCoord2f(0.0, 1.0); glVertex3f(400, 1250, -300);
+	glTexCoord2f(0.0, 1.0); glVertex3f(400, 1200, -300);
 	glEnd();
 	//glutSolidCube(600);
 	glPopMatrix();
@@ -66,8 +76,6 @@ void Car::carFront() {
 	glTranslatef(720, -250, 0);
 	glRotatef(45, 0, 0, 1);
 	glScalef(0.01, 0.4, 0.85);
-	glEnable(GL_TEXTURE_2D);
-
 	glBindTexture(GL_TEXTURE_2D, textures[3]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.7, 1.0); glVertex3f(400, 1250, 300);
