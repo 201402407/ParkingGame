@@ -59,6 +59,7 @@ void setGround() {
 	glPushMatrix();
 	glTranslatef(-450.0f, -300.0f, 0.0); // 카메라 시점을 줄인 만큼 위치도 같은 만큼 - 해서 Translate 시킨다.
 	glRotatef(90, 0.0, 1.0, 0.0);
+	glScalef(2.0, 1.0, 2.0);
 	terrain->RenderTerrain(cam.eye.x, cam.eye.z);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
 	//hField.Render();
 	glPopMatrix();
@@ -92,9 +93,9 @@ void display(void) {
 	setGround();
 	
 	/* 자동차 생성 */
-	glTranslatef(0.0, 160.0, 480.0);
+	glTranslatef(0.0, 420.0, 480.0);
 	glRotatef(90, 0.0, 1.0, 0.0);
-	glScalef(1.5, 1.5, 1.5);
+	glScalef(0.8, 1.5, 1.5);
 	car->drawCar();
 	
 	glutSwapBuffers();

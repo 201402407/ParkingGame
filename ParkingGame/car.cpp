@@ -64,8 +64,8 @@ void Car::carFront() {
 	glBindTexture(GL_TEXTURE_2D, textures[8]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0, 1.0); glVertex3f(400, 1200, 300);
-	glTexCoord2f(1.0, 0.0); glVertex3f(550, 450, 300);
-	glTexCoord2f(0.0, 0.0); glVertex3f(550, 450, -300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(400, 450, 300);
+	glTexCoord2f(0.0, 0.0); glVertex3f(400, 450, -300);
 	glTexCoord2f(0.0, 1.0); glVertex3f(400, 1200, -300);
 	glEnd();
 	//glutSolidCube(600);
@@ -74,13 +74,13 @@ void Car::carFront() {
 	//glColor3f(1, 0, 0);
 	glPushMatrix();
 	glTranslatef(720, -250, 0);
-	glRotatef(45, 0, 0, 1);
+	glRotatef(40, 0, 0, 1);
 	glScalef(0.01, 0.4, 0.85);
 	glBindTexture(GL_TEXTURE_2D, textures[3]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.7, 1.0); glVertex3f(400, 1250, 300);
-	glTexCoord2f(1.0, 0.0); glVertex3f(550, 450, 300);
-	glTexCoord2f(0.0, 0.0); glVertex3f(550, 450, -300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(400, 450, 300);
+	glTexCoord2f(0.0, 0.0); glVertex3f(400, 450, -300);
 	glTexCoord2f(0.0, 1.0); glVertex3f(400, 1250, -300);
 	glEnd();
 	//glutSolidCube(600);
