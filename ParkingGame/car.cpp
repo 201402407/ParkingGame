@@ -70,27 +70,11 @@ void carBack() {
 	glutSolidCube(600);
 	glPopMatrix();
 }
-void Car::carRight() {
+void Car::carLeft() {
 	glPushMatrix();
 	glTranslatef(0, -250, -250);
 	glScalef(1.5, 0.3, 0.01);
 	glEnable(GL_TEXTURE_2D);
-	/*
-	glBindTexture(GL_TEXTURE_2D, textures[5]);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-400, 450, 300);
-	glTexCoord2f(1.0, 0.0); glVertex3f(-400, 450, -300);
-	glTexCoord2f(1.0, 1.0); glVertex3f(-400, 1000, -200);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-400, 1000, 100);
-	glEnd();
-	*/
-	/*
-	glTexCoord2f(0.0, 0.0); glVertex3f(-TEX_SIZE, -TEX_SIZE, TEX_SIZE);
-	glTexCoord2f(1.0, 0.0); glVertex3f(-TEX_SIZE, -TEX_SIZE, -TEX_SIZE);
-	glTexCoord2f(1.0, 1.0); glVertex3f(-TEX_SIZE, TEX_SIZE, -TEX_SIZE);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-TEX_SIZE, TEX_SIZE, TEX_SIZE);
-	*/
-	
 	
 	glBindTexture(GL_TEXTURE_2D, textures[5]);
 	glBegin(GL_QUADS);
@@ -112,17 +96,22 @@ void Car::carRight() {
 	
 	glPopMatrix();
 }
-void carTop() {
+void Car::carTop() {
 	glColor3f(1, 0, 0);
 	glPushMatrix();
-	glTranslatef(15, 20, 0);
+	glTranslatef(0, 110, 0);
 	glScalef(1.0, 0.01, 0.85);
-	glutSolidCube(600);
-	glColor3f(1, 0, 0);
-	glutSolidCube(600);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-450, 1250, 300);
+	glTexCoord2f(1.0, 1.0); glVertex3f(400, 1250, 300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(400, 1250, -300);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-450, 1250, -300);
+	glEnd();
+	//glutSolidCube(600);
 	glPopMatrix();
 }
-void Car::carLeft() {
+void Car::carRight() {
 	
 	glPushMatrix();
 	glTranslatef(0, -250, 250);

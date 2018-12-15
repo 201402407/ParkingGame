@@ -13,5 +13,6 @@ private:
 	static uint _loadTexture(pcStr filename);
 	void carRight();
 	void carLeft();
+	void carTop();
 };
 
