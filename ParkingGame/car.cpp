@@ -94,21 +94,22 @@ void Car::carRight() {
 	
 	glBindTexture(GL_TEXTURE_2D, textures[5]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-200, 1000, -400);
-	glTexCoord2f(1.0, 1.0); glVertex3f(100, 1000, -400);
-	glTexCoord2f(1.0, 0.0); glVertex3f(300, 450, -400);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-300, 450, -400);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-300, 1250, -400);
+	glTexCoord2f(0.7, 1.0); glVertex3f(270, 1250, -400);
+	glTexCoord2f(1.0, 0.0); glVertex3f(400, 450, -400);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-400, 450, -400);
 	glEnd();
 	
-	/*
+	
 	glBindTexture(GL_TEXTURE_2D, textures[6]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-400, -450, 400);
-	glTexCoord2f(1.0, 0.0); glVertex3f(400, -450, 400);
-	glTexCoord2f(1.0, 1.0); glVertex3f(400, 450, 400);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-400, 450, 400);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-400, 450, -400);
+	glTexCoord2f(0.9, 1.0); glVertex3f(550, 450, -400);
+	glTexCoord2f(1.0, 0.0); glVertex3f(550, -450, -400);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-400, -450, -400);
+	
 	glEnd();
-	*/
+	
 	glPopMatrix();
 }
 void carTop() {
@@ -130,17 +131,17 @@ void Car::carLeft() {
 	
 	glBindTexture(GL_TEXTURE_2D, textures[5]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-300, 450, -400);
-	glTexCoord2f(1.0, 0.0); glVertex3f(300, 450, -400);
-	glTexCoord2f(1.0, 1.0); glVertex3f(100, 1000, -400);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-200, 1000, -400);
+	glTexCoord2f(0.0, 0.0); glVertex3f(-400, 450, -400);
+	glTexCoord2f(1.0, 0.0); glVertex3f(400, 450, -400);
+	glTexCoord2f(0.7, 1.0); glVertex3f(270, 1250, -400);
+	glTexCoord2f(0.0, 1.0); glVertex3f(-300, 1250, -400);
 	glEnd();
 	
 	glBindTexture(GL_TEXTURE_2D, textures[6]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0, 0.0); glVertex3f(-400, -450, -400);
-	glTexCoord2f(1.0, 0.0); glVertex3f(400, -450, -400);
-	glTexCoord2f(1.0, 1.0); glVertex3f(400, 450, -400);
+	glTexCoord2f(1.0, 0.0); glVertex3f(550, -450, -400);
+	glTexCoord2f(0.9, 1.0); glVertex3f(550, 450, -400);
 	glTexCoord2f(0.0, 1.0); glVertex3f(-400, 450, -400);
 	glEnd();
 	
