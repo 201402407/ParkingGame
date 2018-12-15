@@ -14,5 +14,9 @@ private:
 	void carRight();
 	void carLeft();
 	void carTop();
+	void carFront();
+	void carBack();
+	void carBottom();
+	void carWheel(int x, int y, int z);
 };
 

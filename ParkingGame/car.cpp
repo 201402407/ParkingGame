@@ -33,26 +33,53 @@ Car::uint Car::_loadTexture(pcStr filename) {
 	return texId;
 }
 
-void carFront() {
+void Car::carFront() {
+	/*
 	glColor3f(1, 0, 0);
 	glPushMatrix();
 	glTranslatef(-450, -250, 0);
 	glScalef(0.01, 0.3, 0.85);
-	glutSolidCube(600);
+	//glutSolidCube(600);
 	glColor3f(1, 0, 0);
-	glutSolidCube(600);
+	//glutSolidCube(600);
 	glPopMatrix();
-
-	glColor3f(1, 0, 0);
+	*/
+	/* 앞면의 앞 */
 	glPushMatrix();
-	glTranslatef(-370, -70, 0);
-	glRotatef(-45, 0, 0, 1);
+	glTranslatef(1000, -155, 0);
+	glRotatef(85, 0, 0, 1);
 	glScalef(0.01, 0.4, 0.85);
-	glutSolidCube(600);
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, textures[7]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0, 1.0); glVertex3f(400, 1250, 300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(550, 450, 300);
+	glTexCoord2f(0.0, 0.0); glVertex3f(550, 450, -300);
+	glTexCoord2f(0.0, 1.0); glVertex3f(400, 1250, -300);
+	glEnd();
+	//glutSolidCube(600);
+	glPopMatrix();
+	/* 앞면의 위 */
+	//glColor3f(1, 0, 0);
+	glPushMatrix();
+	glTranslatef(720, -250, 0);
+	glRotatef(45, 0, 0, 1);
+	glScalef(0.01, 0.4, 0.85);
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, textures[3]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.7, 1.0); glVertex3f(400, 1250, 300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(550, 450, 300);
+	glTexCoord2f(0.0, 0.0); glVertex3f(550, 450, -300);
+	glTexCoord2f(0.0, 1.0); glVertex3f(400, 1250, -300);
+	glEnd();
+	//glutSolidCube(600);
 	glPopMatrix();
 }
 
-void carBack() {
+void Car::carBack() {
 	glColor3f(1, 0, 0);
 	glPushMatrix();
 	glTranslatef(450, -250, 0);
@@ -139,8 +166,8 @@ void Car::carRight() {
 	//glutSolidCube(600);
 	glPopMatrix();
 }
-void carBottom() {
-	glColor3f(1, 0, 0);
+void Car::carBottom() {
+	glColor3f(1, 1, 1);
 	glPushMatrix();
 	glTranslatef(0, -350, 0);
 	glScalef(1.5, 0.1, 0.85);
@@ -148,7 +175,7 @@ void carBottom() {
 	glPopMatrix();
 }
 
-void wheel(int x, int y, int z) {
+void Car::carWheel(int x, int y, int z) {
 	float th;
 	glColor3f(1, 0, 1);
 	int k;
@@ -186,9 +213,9 @@ void Car::drawCar() {
 	carBack();
 	carTop();
 	carBottom();
-	wheel(-300, -450, 200);
-	wheel(300, -450, 200);
-	wheel(-300, -450, -200);
-	wheel(300, -450, -200);
+	carWheel(-300, -450, 200);
+	carWheel(300, -450, 200);
+	carWheel(-300, -450, -200);
+	carWheel(300, -450, -200);
 	//border();
 }
