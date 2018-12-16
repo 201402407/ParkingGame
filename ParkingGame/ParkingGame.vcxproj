@@ -125,10 +125,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='OpenGL_Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Administrator\Google 드라이브\3학년\컴퓨터 그래픽스\실습\glutdlls37beta;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Google 드라이브\3학년\컴퓨터 그래픽스\실습\glutdlls37beta;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\Administrator\Google 드라이브\3학년\컴퓨터 그래픽스\실습\glutdlls37beta;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Google 드라이브\3학년\컴퓨터 그래픽스\실습\glutdlls37beta;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glut32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>

@@ -1,31 +1,38 @@
 #include "include.h"
 #include "car.h"
 
-const char *BMPFile[9] = { "carup.bmp", "carbackup.bmp", "carbackdown.bmp", "carfrontup.bmp",
+const char *BMPFile[9] = {"cartop.bmp", "carbackup.bmp", "carbackdown.bmp", "carfrontup.bmp",
 "carfrontdown.bmp", "carleftup.bmp", "carleftdown.bmp", "carwheel.bmp", "carfrontmiddle.bmp" };
 
 Car::Car(void) {
 	//Car::doTexture();
-	for (int i = 0; i<9; i++)
-		textures[i] = Car::_loadTexture(BMPFile[i]);
+	for (int i = 0; i < 9; i++)
+	//	printf("asd");
+		textures[i] = _loadTexture(BMPFile[i]);
 }
 Car::~Car(void) {}
 
 
 Car::uint Car::_loadTexture(pcStr filename) {
 	// aux는 내부적으로 malloc이므로 free 필수
-	AUX_RGBImageRec* img = auxDIBImageLoadA(filename);
+	AUX_RGBImageRec* img = auxDIBImageLoad(filename);
+	printf("asf1");
 	// 텍스쳐 생성
 	GLuint texId;
 	glGenTextures(1, &texId);
+	printf(" %d" , img->sizeX);
+	printf(" %d ", img->sizeY);
 	glBindTexture(GL_TEXTURE_2D, texId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->sizeX, img->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, img->data);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, img->sizeX, img->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, img->data);
+	printf("asf3");
 	// 텍스쳐 확장 보간법 선정
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	printf("asf4");
 	// CLAMP_TO_EDGE 파라메터는 EDGE의 색상으로 경계를 확장
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	printf("asf5");
 	std::cout << filename << std::endl;
 	// 메모리 할당 해제
 	free(img->data);
@@ -88,22 +95,36 @@ void Car::carFront() {
 }
 
 void Car::carBack() {
-	glColor3f(1, 0, 0);
+	
+	/* 뒷쪽의 아래*/
 	glPushMatrix();
-	glTranslatef(450, -250, 0);
-	glScalef(0.01, 0.3, 0.85);
-	glutSolidCube(600);
+	glTranslatef(-600, -230, 0);
+	glScalef(0.01, 0.35, 0.85);
+	
+	glBindTexture(GL_TEXTURE_2D, textures[2]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(-0.1, 1.0); glVertex3f(-550, 450, -300);
+	glTexCoord2f(0.1, 0.0); glVertex3f(-550, -450, -300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-550, -450, 300);
+	glTexCoord2f(0.8, 0.9); glVertex3f(-550, 450, 300);
+	glEnd();
 	glPopMatrix();
 
-	glColor3f(1, 0, 0);
+	/* 뒷쪽의 위 */
 	glPushMatrix();
-	glTranslatef(380, -80, 0);
-	glRotatef(38, 0, 0, 1);
-	glScalef(0.01, 0.35, 0.85);
-	glutSolidCube(600);
-	glColor3f(1, 0, 0);
-	glutSolidCube(600);
+	glTranslatef(-660, -210, 0);
+	glRotatef(-32, 0, 0, 1);
+	glScalef(0.01, 0.3, 0.85);
+	//glutSolidCube(600);
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(-0.1, 1.0); glVertex3f(-400, 1350, -300);
+	glTexCoord2f(0.2, 0.0); glVertex3f(-400, 450, -300);
+	glTexCoord2f(1.0, 0.0); glVertex3f(-400, 450, 300);
+	glTexCoord2f(0.65, 0.9); glVertex3f(-400, 1350, 300);
+	glEnd();
 	glPopMatrix();
+
 }
 void Car::carLeft() {
 	glPushMatrix();
