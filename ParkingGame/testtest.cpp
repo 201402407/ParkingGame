@@ -228,16 +228,22 @@ void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
 	*/
 
 	if (keyPressed[UP]) { 
-		carLocationZ = carLocationZ - 10;	isFront = true;	printf("up \n"); rotateCar = rotateCar + 180;
+		carLocationZ = carLocationZ - 15;
+		carLocationX = carLocationX - 15;
+		isFront = true;
+		printf("up \n");
 	}
 	if (keyPressed[DOWN]) {
-		carLocationZ = carLocationZ + 10;	isBack = true;	printf("down \n");	rotateCar = rotateCar - 180;
+		carLocationZ = carLocationZ + 15;
+		carLocationX = carLocationX + 15;
+		isBack = true;
+		printf("down \n");
 	}
 	if (keyPressed[LEFT]) {
-		carLocationX = carLocationX - 10;	isLeft = true;	printf("left \n");	rotateCar++;
+		carLocationX = carLocationX - 15;	isLeft = true;	printf("left \n");	rotateCar++;
 	}
 	if (keyPressed[RIGHT]) { 
-		carLocationX = carLocationX + 10;	isRight = true;printf("right \n");	rotateCar--;
+		carLocationX = carLocationX + 15;	isRight = true;printf("right \n");	rotateCar--;
 	}
 	//if (cam.eye.y<terrain->getHeight(cam.eye.x, cam.eye.z)) { cam.slide(0, 1.0, 0); }// 간단한 Colision Detection 지표면 아래로 카메라가 내려갈때는 지표면 위로 유지시킴
 	
