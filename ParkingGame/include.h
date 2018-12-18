@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <windows.h>
+#include <conio.h>
 #pragma comment(lib, "glaux.lib")
 #pragma comment(lib, "legacy_stdio_definitions.lib")
 

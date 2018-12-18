@@ -2,6 +2,7 @@
 #include <fstream>
 #include <assert.h>
 
+#include "bus.h"
 #include "camera.h"
 #include "heightfield.h"
 #include "skybox.h"
@@ -9,10 +10,26 @@
 #include "terrain.h"
 #pragma comment(lib,"glew32.lib")
 
+#define LEFT 'a'
+#define RIGHT 'd'
+#define UP 'w'
+#define DOWN 's'
+
 // 카메라 위치
 float nx = 0;
 float ny = 800;
 float nz = 1000;
+bool cameraMove = false; // 카메라 이동
+
+// 자동차 이동관련
+float carLocationX = 0;
+float carLocationZ = 0;
+float rotateCar = 0;
+bool isLeft = false;
+bool isRight = false;
+bool isFront = false;
+bool isBack = false;
+bool carMove = false;
 
 float xpos = 85.078, ypos = 351.594, zpos = 281.033, xrot = 758, yrot = 90, angle = 0.0;
 float lastx, lasty;
@@ -21,7 +38,10 @@ float bounce;
 float cScale = 1.0;
 
 bool keyPressed[256];	//키보드입력상황배열
-void myKeyboard(unsigned char key, int x, int y) { keyPressed[key] = true; }
+void myKeyboard(unsigned char key, int x, int y) {
+	printf("keyboard go \n");
+	keyPressed[key] = true;
+}
 //해당배열이 true면 Key down
 void myKeyboardUp(unsigned char key, int x, int y) { keyPressed[key] = false; }
 //해당배열이 false면 Key Up
@@ -32,6 +52,7 @@ Camera cam;	//카메라
 CCamera objCamera;
 Terrain* terrain;	//지형
 Car* car; // 자동차
+Bus* bus; // 버스
 
 void camera(void) {
 	int posX = (int)xpos;
@@ -78,7 +99,13 @@ void display(void) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(nx, ny, nz, 0, 0, 0, 0, 1, 0);
+	
+	if (cameraMove) {
+		gluLookAt(nx, ny, nz, nx, ny, 0, 0, 1, 0);
+	}
+	else {
+		gluLookAt(nx, ny, nz, 0, 0, 0, 0, 1, 0);
+	}
 	/* 기본 설정 */
 	glShadeModel(GL_SMOOTH);
 	// 깊이버퍼, 후면제거활성화
@@ -92,11 +119,21 @@ void display(void) {
 	/* 바닥 생성 */
 	setGround();
 	
+	/* 버스 생성 */
+	glTranslatef(carLocationX, 0, 0);
+	glTranslatef(0, 0, carLocationZ);
+	glRotatef(rotateCar, 0.0, 1.0, 0.0);
+	bus->drawBus();
 	/* 자동차 생성 */
-	glTranslatef(0.0, 420.0, 480.0);
+	
+	glTranslatef(0.0, 420.0, 480.0); // 초기 세팅
+	glTranslatef(carLocationX, 0, 0);
+	glTranslatef(0, 0, carLocationZ);
+	
 	glRotatef(90, 0.0, 1.0, 0.0);
+	glRotatef(rotateCar, 0.0, 1.0, 0.0);
 	glScalef(0.8, 1.5, 1.5);
-	car->drawCar();
+	//car->drawCar();
 	
 	glutSwapBuffers();
 }
@@ -104,7 +141,6 @@ void display(void) {
 void Init(void) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-
 	hField.Create("test2.raw", 1024, 1024);
 }
 
@@ -117,63 +153,95 @@ void mouseMovement(int x, int y) {
 	yrot += (float)diffx;
 }
 
-void keyboard(unsigned char key, int x, int y) {
-
-	if (key == 'w')
+/* 마우스 클릭 이벤트 */
+/*
+void MyMouseClick(GLint Button, GLint State, GLint x, GLint y)
+{
+	if (Button == GLUT_LEFT_BUTTON && State == GLUT_DOWN)
 	{
-		float xrotrad, yrotrad;
-		yrotrad = (yrot / 180 * 3.141592654f);
-		xrotrad = (xrot / 180 * 3.141592654f);
-		xpos += float(sin(yrotrad)) * cScale;
-		zpos -= float(cos(yrotrad)) * cScale;
-		ypos -= float(sin(xrotrad));
-		bounce += 0.04;
+		TopLeftX = x;
+		TopLeftY = y;
 	}
+}
+*/
 
-	if (key == 's')
-	{
-		float xrotrad, yrotrad;
-		yrotrad = (yrot / 180 * 3.141592654f);
-		xrotrad = (xrot / 180 * 3.141592654f);
-		xpos -= float(sin(yrotrad)) * cScale;
-		zpos += float(cos(yrotrad)) * cScale;
-		ypos += float(sin(xrotrad));
-		bounce += 4.04;
-	}
 
-	if (key == 'd')
-	{
-		float yrotrad;
-		yrotrad = (yrot / 180 * 3.141592654f);
-		xpos += float(cos(yrotrad)) * cScale;
-		zpos += float(sin(yrotrad)) * cScale;
-	}
-
-	if (key == 'a')
-	{
-		float yrotrad;
-		yrotrad = (yrot / 180 * 3.141592654f);
-		xpos -= float(cos(yrotrad)) * cScale;
-		zpos -= float(sin(yrotrad)) * cScale;
-	}
-
+/* 마우스 드래그 시 카메라 움직임 */
+void pressMouse(int x, int y) {
+	printf("mouse %d is x이고 %d 가 y다. \n", x, y);
+	glutPostRedisplay();
 }
 
+/* 마우스 스크롤 휠 시 카메라 줌인 줌 아웃 */
+void mouse(int button, int state, int x, int y) {
+	if (state == GLUT_UP) {
+		switch (button) {
+		case GLUT_LEFT_BUTTON:
+			printf("click! \n");
+			break;
+		case 3: // 마우스 휠업
+			cameraMove = true;
+			printf("wheel up! \n");
+			nx += 10;
+			ny += 10;
+			break;
+		case 4: // 마우스 휠 다운
+			printf("wheel down! \n");
+			cameraMove = true;
+			nx -= 10;
+			ny -= 10;
+			break;
+		}
+	}
+	glutPostRedisplay();
+}
+
+
+/** 키보드 입력 스캔하는 Idle 함수.
+* F1~F9 : 59 ~ 67
+* F11~F12 : 133~134
+* LEFT : 75, RIGHT : 77, UP : 72, DOWN : 80, SPACE : 32
+* END : 79, DELETE : 83
+*/
 void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
-	if (keyPressed['1'])glPolygonMode(GL_FRONT, GL_LINE);
-	if (keyPressed['2'])glPolygonMode(GL_FRONT, GL_FILL);
-	if (keyPressed['d']) { cam.slide(0.2, 0, 0); }
-	if (keyPressed['a']) { cam.slide(-0.2, 0, 0); }
-	if (keyPressed['s']) { cam.slide(0, 0, 1.0); }
-	if (keyPressed['w']) { cam.slide(0, 0, -1.0); }
-	if (cam.eye.y<terrain->getHeight(cam.eye.x, cam.eye.z)) { cam.slide(0, 1.0, 0); }// 간단한 Colision Detection 지표면 아래로 카메라가 내려갈때는 지표면 위로 유지시킴
-	if (keyPressed['i']) { cam.pitch(-0.5); }
-	if (keyPressed['k']) { cam.pitch(0.5); }
-	if (keyPressed['q']) { cam.yaw(-0.5); }
-	if (keyPressed['e']) { cam.yaw(0.5); }
-	if (keyPressed['j']) { cam.roll(0.5); }
-	if (keyPressed['l']) { cam.roll(-0.5); }
-	else { cam.slide(0, 0, 0); } //아무것도 눌리지 않았을때는 이동없다고 보고 계속 모델뷰 행렬을 유지시켜준다.
+	// 우선 초기화
+	isFront = false;
+	isBack = false;
+	isLeft = false;
+	isRight = false;
+
+	if (keyPressed['1'])	glPolygonMode(GL_FRONT, GL_LINE);
+	if (keyPressed['2'])	glPolygonMode(GL_FRONT, GL_FILL);
+	/*
+	if (keyPressed[UP]) { // UP
+		carLocationZ = carLocationZ + 5;	isFront = true;	carMove = true;	printf("up \n");
+	}
+	if (keyPressed[LEFT]) { // LEFT
+		carLocationX = carLocationX + 5;	isLeft = true;	carMove = true;	printf("left \n");
+	}
+	if (keyPressed[RIGHT]) {  // RIGHT
+		carLocationX = carLocationX - 5;	isRight = true; carMove = true;	printf("right \n");
+	}
+	if (keyPressed[DOWN]) {  // DOWN
+		carLocationZ = carLocationZ - 5;	isBack = true; carMove = true;	printf("down \n");
+	}
+	*/
+
+	if (keyPressed[UP]) { 
+		carLocationZ = carLocationZ - 10;	isFront = true;	printf("up \n"); rotateCar = rotateCar + 180;
+	}
+	if (keyPressed[DOWN]) {
+		carLocationZ = carLocationZ + 10;	isBack = true;	printf("down \n");	rotateCar = rotateCar - 180;
+	}
+	if (keyPressed[LEFT]) {
+		carLocationX = carLocationX - 10;	isLeft = true;	printf("left \n");	rotateCar++;
+	}
+	if (keyPressed[RIGHT]) { 
+		carLocationX = carLocationX + 10;	isRight = true;printf("right \n");	rotateCar--;
+	}
+	//if (cam.eye.y<terrain->getHeight(cam.eye.x, cam.eye.z)) { cam.slide(0, 1.0, 0); }// 간단한 Colision Detection 지표면 아래로 카메라가 내려갈때는 지표면 위로 유지시킴
+	
+	else { carMove = false; } //아무것도 눌리지 않았을때는 이동없다고 보고 계속 모델뷰 행렬을 유지시켜준다.
 	glutPostRedisplay();// 다시그리기
 }
 
@@ -186,17 +254,26 @@ void reshape(int w, int h) {
 }
 
 void pressKey(int key, int x, int y) {
+	if (key == GLUT_KEY_UP)		keyPressed[72] = true;
+	if (key == GLUT_KEY_DOWN)	keyPressed[80] = true;
+	if (key == GLUT_KEY_LEFT)	keyPressed[75] = true;
+	if (key == GLUT_KEY_RIGHT)	keyPressed[77] = true;
+	
+	
 	switch (key) {
 	case GLUT_KEY_F1:
-		nx += 1;
+		nx += 50;
+		printf("F1");
 		//cam.pitch(0.5);
 		break;
 	case GLUT_KEY_F2:
-		nx -= 1;
+		nx -= 50;
+		printf("F2");
 		//cam.pitch(-0.5);
 		break;
 	case GLUT_KEY_F3:
-		ny += 150;
+		ny += 50;
+		printf("F3");
 		//cam.yaw(0.5);
 		break;
 	case GLUT_KEY_F4:
@@ -205,26 +282,36 @@ void pressKey(int key, int x, int y) {
 		printf("F4");
 		break;
 	case GLUT_KEY_F5:
-		nz += 1;
+		nz += 50;
+		printf("F5");
 		//cam.roll(0.5);
 		break;
 	case GLUT_KEY_F6:
-		nz -= 1;
+		printf("F6");
+		nz -= 50;
 		//cam.roll(-0.5);
 		break;
+		/*
 	case GLUT_KEY_UP: // 앞으로 이동
-		nz += 50;
+		keyPressed[72] = true;
+		//nz += 50;
 		break;
 	case GLUT_KEY_DOWN: // 뒤로 이동
-		nz -= 50;
+		keyPressed[80] = true;
+		
+		//nz -= 50;
 		break;
 	case GLUT_KEY_LEFT: // 왼쪽 이동
-		nx += 50;
+		keyPressed[75] = true;
+		//nx += 50;
 		break;
 	case GLUT_KEY_RIGHT: // 오른쪽 이동
-		nx -= 50;
+		keyPressed[77] = true;
+		//nx -= 50;
 		break;
+		*/
 	}
+	
 	glutPostRedisplay();// 다시그리기
 }
 
@@ -234,33 +321,25 @@ int main(int argc, char **argv) {
 	glutInitWindowSize(1200, 700);
 	glutCreateWindow("Parking-Game!");
 	Init();
-	glutDisplayFunc(display);
-	glutIdleFunc(Idle);
-	glutReshapeFunc(reshape);
+	glutIdleFunc(Idle); // 여기서 키 눌렀는지 확인
 	//glutKeyboardFunc(keyboard);
 	//glutPassiveMotionFunc(mouseMovement);
+	/* 특수키 입력 */
+	glutSpecialFunc(pressKey);
+	/* 아스키코드로 받아 수시로 확인 */
 	glutKeyboardFunc(myKeyboard);
 	glutKeyboardUpFunc(myKeyboardUp);
-
+	/* 마우스 드래그 확인 */
+	glutMotionFunc(pressMouse);
+	glutMouseFunc(mouse);
 	// 자동차 객체
 	car = new Car();
+	bus = new Bus();
 	skybox = new Skybox();
 	// Terrain, Skybox객체
 	terrain = new Terrain("map2.raw", "down.bmp", 1024, 1024);
-	// 뷰포트와 카메라 설정 (카메라 설정 함수 내부에 이미 PERSPECTIVE와 MODELVIEW 설정을 할 수 있게 했다.)
-	/*
-	cam.set(4, 4, 4, 0, 0, 0, 0, 1, 0);
-	cam.setShape(120.0f, 64.0f / 48.0f, 0.5f, 2000.0f);
-	printf("%.2f, %.2f, %.2f", cam.eye.x, cam.eye.y, cam.eye.z);
-	// 카메라의 초기위치와 회전각
-	// 설정을 마친 카메라가 처음에 어디에서 어디를 보고있을지 결정
-	cam.slide(0, 100, 0);
-	cam.roll(0);
-	cam.yaw(10);
-	cam.pitch(45);
-	*/
-	glutSpecialFunc(pressKey);
-
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
 	glutMainLoop();
 	return 0;
 }

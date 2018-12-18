@@ -16,23 +16,21 @@ Car::~Car(void) {}
 Car::uint Car::_loadTexture(pcStr filename) {
 	// aux는 내부적으로 malloc이므로 free 필수
 	AUX_RGBImageRec* img = auxDIBImageLoad(filename);
-	printf("asf1");
+	
 	// 텍스쳐 생성
 	GLuint texId;
 	glGenTextures(1, &texId);
-	printf(" %d" , img->sizeX);
-	printf(" %d ", img->sizeY);
 	glBindTexture(GL_TEXTURE_2D, texId);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, img->sizeX, img->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, img->data);
-	printf("asf3");
+	
 	// 텍스쳐 확장 보간법 선정
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	printf("asf4");
+	
 	// CLAMP_TO_EDGE 파라메터는 EDGE의 색상으로 경계를 확장
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	printf("asf5");
+	
 	std::cout << filename << std::endl;
 	// 메모리 할당 해제
 	free(img->data);
@@ -115,7 +113,6 @@ void Car::carBack() {
 	glTranslatef(-660, -210, 0);
 	glRotatef(-32, 0, 0, 1);
 	glScalef(0.01, 0.3, 0.85);
-	//glutSolidCube(600);
 	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(-0.1, 1.0); glVertex3f(-400, 1350, -300);
