@@ -14,13 +14,18 @@
 #define RIGHT 'd'
 #define UP 'w'
 #define DOWN 's'
+#define GLUT_WHEEL_UP 3
+#define GLUT_WHEEL_DOWN 4
+
 #define PI 3.141592
 
 // 카메라 위치
 float nx = 0;
 float ny = 800;
 float nz = 1000;
+
 bool cameraMove = false; // 카메라 이동
+bool isDrag = false;
 
 // 자동차 이동관련
 float carLocationX = 0;
@@ -179,55 +184,53 @@ void MyMouseClick(GLint Button, GLint State, GLint x, GLint y)
 }
 */
 
-
+/* 마우스 이동 */
+void notPress(int x, int y) {
+	isDrag = false;
+}
 /* 마우스 드래그 시 카메라 움직임 */
 void pressMouse(int x, int y) {
 	// 지금 찍은 드래그 좌표
 	int currentx = x;
 	int currenty = y;
 	
-	if (lastx == 0) {
+	if (!isDrag) {
+		cout << "DRag" << endl;
+		lastx = currentx;
+		lasty = currenty;
+		isDrag = true;
 		return;
 	}
 
 	nx = nx - (currentx - lastx);
 	ny = ny - (currenty - lasty);
-	/*
-	// 만약 드래그를 왼->오 로 한 경우
-	if ((currentx - lastx) > (currenty - lasty)) {
-		nx = nx - (currentx - lastx);
-	}
-	*/
+	
 	// 이전 좌표에 대입
 	lastx = x;
 	lasty = y;
-	printf("mouse %d is x이고 %d 가 y다. \n", x, y);
-	//nx = nx - x;
-	//ny = ny - y;
+	
 	glutPostRedisplay();
 }
 
 /* 마우스 스크롤 휠 시 카메라 줌인 줌 아웃 */
 void mouse(int button, int state, int x, int y) {
-	if (state == GLUT_UP) {
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
 			printf("click! \n");
 			break;
-		case 3: // 마우스 휠업
+		case GLUT_WHEEL_UP: // 마우스 휠업
 			cameraMove = true;
 			printf("wheel up! \n");
 			nx += 10;
 			ny += 10;
 			break;
-		case 4: // 마우스 휠 다운
+		case GLUT_WHEEL_DOWN: // 마우스 휠 다운
 			printf("wheel down! \n");
 			cameraMove = true;
 			nx -= 10;
 			ny -= 10;
 			break;
 		}
-	}
 	glutPostRedisplay();
 }
 
@@ -452,6 +455,7 @@ int main(int argc, char **argv) {
 	glutKeyboardFunc(myKeyboard);
 	glutKeyboardUpFunc(myKeyboardUp);
 	/* 마우스 드래그 확인 */
+	glutPassiveMotionFunc(notPress);
 	glutMotionFunc(pressMouse);
 	glutMouseFunc(mouse);
 	// 자동차 객체
