@@ -95,8 +95,9 @@ void setGround() {
 	glPushMatrix();
 	glTranslatef(-450.0f, -300.0f, 0.0); // 카메라 시점을 줄인 만큼 위치도 같은 만큼 - 해서 Translate 시킨다.
 	glRotatef(90, 0.0, 1.0, 0.0);
-	glScalef(2.0, 1.0, 2.0);
-	terrain->RenderTerrain(cam.eye.x, cam.eye.z);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
+	glScalef(0.5, 0.5, 0.5);
+	
+	terrain->RenderTerrain(-10, 0);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
 	//hField.Render();
 	glPopMatrix();
 }
@@ -129,7 +130,7 @@ void display(void) {
 	//glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
 
 	/* 배경 생성 */
-	//setBackGround();
+	setBackGround();
 
 	/* 바닥 생성 */
 	setGround();
@@ -280,7 +281,7 @@ void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
 	*/
 	if (keyPressed[UP] || keyPressed[DOWN] || keyPressed[LEFT] || keyPressed[RIGHT]) {
 		carMove = true;
-		rotateCar = rotateCar % 360;
+		//rotateCar = rotateCar % 360;
 	}
 
 	if (keyPressed[LEFT]) {
@@ -463,7 +464,7 @@ int main(int argc, char **argv) {
 	bus = new Bus();
 	skybox = new Skybox();
 	// Terrain, Skybox객체
-	terrain = new Terrain("map2.raw", "down.bmp", 1024, 1024);
+	terrain = new Terrain("testtest.raw", "down.bmp", 1024, 1024);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutMainLoop();
