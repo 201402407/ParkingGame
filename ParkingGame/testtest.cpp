@@ -14,6 +14,7 @@
 #define RIGHT 'd'
 #define UP 'w'
 #define DOWN 's'
+#define PI 3.141592
 
 // 카메라 위치
 float nx = 0;
@@ -24,7 +25,11 @@ bool cameraMove = false; // 카메라 이동
 // 자동차 이동관련
 float carLocationX = 0;
 float carLocationZ = 0;
-float rotateCar = 0;
+
+float xp, zp = 0.0;
+float speed = 0;
+
+GLuint rotateCar = 0;
 bool isLeft = false;
 bool isRight = false;
 bool isFront = false;
@@ -62,6 +67,11 @@ void camera(void) {
 	glRotatef(yrot, 0.0, 1.0, 0.0);
 	glTranslated(-xpos, -ypos, -zpos);
 	printf("%.2f , %.2f , %.2f \n", xpos, ypos, zpos);
+}
+
+/* 라디안 구하는 함수 */
+double getRadian(int num) {
+	return num * (PI / 180);
 }
 
 /* 배경화면 SkyBox 생성 함수 */
@@ -114,18 +124,22 @@ void display(void) {
 	//glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
 
 	/* 배경 생성 */
-	setBackGround();
+	//setBackGround();
 
 	/* 바닥 생성 */
 	setGround();
 	
+	if (!(keyPressed[UP] || keyPressed[DOWN])) {
+		speed = 0;
+	}
+
 	/* 버스 생성 */
 	glTranslatef(carLocationX, 0, 0);
 	glTranslatef(0, 0, carLocationZ);
 	glRotatef(rotateCar, 0.0, 1.0, 0.0);
 	bus->drawBus();
+
 	/* 자동차 생성 */
-	
 	glTranslatef(0.0, 420.0, 480.0); // 초기 세팅
 	glTranslatef(carLocationX, 0, 0);
 	glTranslatef(0, 0, carLocationZ);
@@ -168,7 +182,28 @@ void MyMouseClick(GLint Button, GLint State, GLint x, GLint y)
 
 /* 마우스 드래그 시 카메라 움직임 */
 void pressMouse(int x, int y) {
+	// 지금 찍은 드래그 좌표
+	int currentx = x;
+	int currenty = y;
+	
+	if (lastx == 0) {
+		return;
+	}
+
+	nx = nx - (currentx - lastx);
+	ny = ny - (currenty - lasty);
+	/*
+	// 만약 드래그를 왼->오 로 한 경우
+	if ((currentx - lastx) > (currenty - lasty)) {
+		nx = nx - (currentx - lastx);
+	}
+	*/
+	// 이전 좌표에 대입
+	lastx = x;
+	lasty = y;
 	printf("mouse %d is x이고 %d 가 y다. \n", x, y);
+	//nx = nx - x;
+	//ny = ny - y;
 	glutPostRedisplay();
 }
 
@@ -210,6 +245,20 @@ void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
 	isLeft = false;
 	isRight = false;
 
+	// 각도
+	//angle = 3.14159 * (rotateCar / 180.0);
+
+
+	/* 새로운 진행방향 */
+	/*
+	xp = dir_x * cos(angle) + dir_z * sin(angle);
+	zp = -dir_x * sin(angle) + dir_z * cos(angle);
+	*/
+
+	/* 진행방향 */
+	xp = -sin(getRadian(rotateCar));
+	zp = -cos(getRadian(rotateCar));
+
 	if (keyPressed['1'])	glPolygonMode(GL_FRONT, GL_LINE);
 	if (keyPressed['2'])	glPolygonMode(GL_FRONT, GL_FILL);
 	/*
@@ -226,28 +275,95 @@ void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
 		carLocationZ = carLocationZ - 5;	isBack = true; carMove = true;	printf("down \n");
 	}
 	*/
+	if (keyPressed[UP] || keyPressed[DOWN] || keyPressed[LEFT] || keyPressed[RIGHT]) {
+		carMove = true;
+		rotateCar = rotateCar % 360;
+	}
 
-	if (keyPressed[UP]) { 
-		carLocationZ = carLocationZ - 15;
-		carLocationX = carLocationX - 15;
+	if (keyPressed[LEFT]) {
+		rotateCar = rotateCar + 2;
+
+		/*
+		cout <<"rotate : " << rotateCar << endl;
+		cout << "xp : " << xp << endl;
+		cout << "zp : " << zp << endl;
+		cout << "carLocationX : " << carLocationX << endl;
+		cout << "carLocationZ : " << carLocationZ << endl;
+		//		carLocationX = carLocationX - ((float)(tan(rotateCar) * 2));
+		isLeft = true;
+		*/
+		//printf("left \n");
+	}
+	if (keyPressed[RIGHT]) {
+		rotateCar = rotateCar - 2;
+		//carLocationX = carLocationX + (rotateCar / 2);
+		//carLocationX = carLocationX + ((float)(tan(rotateCar) * 2));
+		isRight = true;
+
+		//printf("right \n");
+	}
+
+	if (keyPressed[UP]) {  // up은 -
+		speed += 1;
+		printf("%.2f \n", speed);
+
+		/* 진행 방향에 따른 위치 이동 */
+		carLocationX = carLocationX + (xp * speed);
+		carLocationZ = carLocationZ + (zp * speed);
+
+		/*
+		cout << "rotate : " << rotateCar << endl;
+		cout << "xp : " << xp << endl;
+		cout << "zp : " << zp << endl;
+		cout << "carLocationX : " << carLocationX << endl;
+		cout << "carLocationZ : " << carLocationZ << endl;
+		*/
+		//printf("%.2f \n", carLocationZ);
+
+		/*
+		printf("%.2f \n", speed);
+		if (rotateCar > 90 && rotateCar < 270) {
+			carLocationZ = carLocationZ + speed;
+		}
+		else {
+			//carLocationZ = carLocationZ - ((float)(tan(rotateCar) * speed));
+			carLocationZ = carLocationZ - speed;
+		}
+		if(carLocationX != 0)
+			carLocationX = carLocationX - ((float)(tan(rotateCar) * speed));
 		isFront = true;
-		printf("up \n");
+		*/
+		//printf("up \n");
 	}
 	if (keyPressed[DOWN]) {
+		speed -= 1;
+		//printf("%.2f \n", speed);
+
+		/* 진행 방향에 따른 위치 이동 */
+		carLocationX = carLocationX + (xp * speed);
+		carLocationZ = carLocationZ + (zp * speed);
+		/*
+		if (rotateCar > 90 && rotateCar < 270) {
+			carLocationZ = carLocationZ - speed;
+		}
+		else {
+			carLocationZ = carLocationZ + speed;
+		}
 		carLocationZ = carLocationZ + 15;
-		carLocationX = carLocationX + 15;
+		if (carLocationX != 0) {
+			carLocationX = carLocationX + ((float)(tan(rotateCar) * speed));
+		}
+		*/
 		isBack = true;
-		printf("down \n");
-	}
-	if (keyPressed[LEFT]) {
-		carLocationX = carLocationX - 15;	isLeft = true;	printf("left \n");	rotateCar++;
-	}
-	if (keyPressed[RIGHT]) { 
-		carLocationX = carLocationX + 15;	isRight = true;printf("right \n");	rotateCar--;
+		
+		//printf("down \n");
 	}
 	//if (cam.eye.y<terrain->getHeight(cam.eye.x, cam.eye.z)) { cam.slide(0, 1.0, 0); }// 간단한 Colision Detection 지표면 아래로 카메라가 내려갈때는 지표면 위로 유지시킴
 	
-	else { carMove = false; } //아무것도 눌리지 않았을때는 이동없다고 보고 계속 모델뷰 행렬을 유지시켜준다.
+	else { 
+		//speed = 0;
+		carMove = false;
+	} //아무것도 눌리지 않았을때는 이동없다고 보고 계속 모델뷰 행렬을 유지시켜준다.
 	glutPostRedisplay();// 다시그리기
 }
 
