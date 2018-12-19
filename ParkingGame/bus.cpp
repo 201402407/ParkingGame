@@ -15,9 +15,13 @@ const char *texFile[6] = {
 	"busbottom.bmp"
 };
 
+const char *sandWall = "sand.bmp";
+
 Bus::Bus(void) {
 	for (int i = 0; i<6; i++)
 		textures[i] = loadTexture(texFile[i]);
+
+	texWall = loadTexture(sandWall);
 }
 Bus::~Bus(void) {}
 
@@ -141,7 +145,7 @@ void Bus::drawBus() {
 	//glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
 	// Skybox는 다른 색상의 영향을 받으면 안되므로 DECAL
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	Bus::busLeft();
 	Bus::busFront();
 	Bus::busRight();
@@ -170,7 +174,7 @@ Bus::uint Bus::loadTexture(pcStr filename) {
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glEnable(GL_TEXTURE_2D);
 
 	std::cout << filename << std::endl;

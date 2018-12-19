@@ -11,6 +11,7 @@ private:
 	typedef unsigned int uint;
 	typedef const char * pcStr;
 	uint textures[8];
+	uint texWall;
 	static uint loadTexture(pcStr filename);
 	void busRight();
 	void busLeft();

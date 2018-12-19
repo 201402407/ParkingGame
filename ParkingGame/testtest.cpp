@@ -17,12 +17,10 @@
 #define GLUT_WHEEL_UP 3
 #define GLUT_WHEEL_DOWN 4
 
-#define PI 3.141592
-
 // 카메라 위치
 float nx = 0;
-float ny = 800;
-float nz = 1000;
+float ny = 5750;
+float nz = 4400;
 
 bool cameraMove = false; // 카메라 이동
 bool isDrag = false;
@@ -33,8 +31,8 @@ float carLocationZ = 0;
 
 float xp, zp = 0.0;
 float speed = 0;
-
-GLuint rotateCar = 0;
+float kz = 0;
+int rotateCar = 0;
 bool isLeft = false;
 bool isRight = false;
 bool isFront = false;
@@ -47,9 +45,9 @@ float lastx, lasty;
 float bounce;
 float cScale = 1.0;
 
+
 bool keyPressed[256];	//키보드입력상황배열
 void myKeyboard(unsigned char key, int x, int y) {
-	printf("keyboard go \n");
 	keyPressed[key] = true;
 }
 //해당배열이 true면 Key down
@@ -63,16 +61,6 @@ CCamera objCamera;
 Terrain* terrain;	//지형
 Car* car; // 자동차
 Bus* bus; // 버스
-
-void camera(void) {
-	int posX = (int)xpos;
-	int posZ = (int)zpos;
-
-	//glRotatef(xrot, 1.0, 0.0, 0.0);
-	glRotatef(yrot, 0.0, 1.0, 0.0);
-	glTranslated(-xpos, -ypos, -zpos);
-	printf("%.2f , %.2f , %.2f \n", xpos, ypos, zpos);
-}
 
 /* 라디안 구하는 함수 */
 double getRadian(int num) {
@@ -93,15 +81,65 @@ void setBackGround() {
 /* 바닥 생성 함수 */
 void setGround() {
 	glPushMatrix();
-	glTranslatef(-450.0f, -300.0f, 0.0); // 카메라 시점을 줄인 만큼 위치도 같은 만큼 - 해서 Translate 시킨다.
+	glTranslatef(0.0f, -300.0f, 0.0f); // 카메라 시점을 줄인 만큼 위치도 같은 만큼 - 해서 Translate 시킨다.
 	glRotatef(90, 0.0, 1.0, 0.0);
-	glScalef(0.5, 0.5, 0.5);
+	glScalef(6.0, 5.0,7.0);
 	
 	terrain->RenderTerrain(-10, 0);//지형을 그린다.좌표를 보내주는 이유는 카메라가 위치한 타일블럭의 좌표를 계산하기 위해 ppt참조
 	//hField.Render();
 	glPopMatrix();
 }
 
+/* 버스 생성 함수 */
+void setBus() {
+
+	glPushMatrix();
+	glTranslatef(-500, 40, 2600);
+	glTranslatef(carLocationX, 0, 0);
+	glTranslatef(0, 0, carLocationZ);
+	glRotatef(rotateCar, 0.0, 1.0, 0.0);
+	glScalef(0.8, 0.8, 0.8);
+	GLfloat ambi_diff[] = { 1.0, 1.0, 1.0, 1.0 }; // ambient 와 diffuse
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 }; // 정반사 표면
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, ambi_diff);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMateriali(GL_FRONT, GL_SHININESS, 120);
+	bus->drawBus();
+	glPopMatrix();
+}
+
+/* 기본 설정 */
+int InitLightingGL() {
+	/* 기본 설정 */
+	glShadeModel(GL_SMOOTH);
+	// 깊이버퍼, 후면제거활성화
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	/* Lighting */
+	GLfloat ambientLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat diffuseLight[] = { 0.9f, 0.9f, 0.0f, 1.0f };
+	GLfloat lightPos[] = { 0.0f, 2500.0f, 0.0f, 1.0f };
+	GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat specref[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glEnable(GL_LIGHTING); // GL_LIGHTING으로 사용한다고 설정.
+	glEnable(GL_LIGHT0); // LIGHT0 종류를 사용한다고 설정.
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.0);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	GLfloat spot_direction[] = { 0.0, -1.0, 0.0, 0.0 };
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
+	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2); // set focusing strength
+	//glEnable(GL_LIGHT0); // 0번빛을 사용한다.
+
+	glDepthFunc(GL_LEQUAL); // The Type Of Depth Testing To Do
+							// Really Nice Perspective    Calculations
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	return TRUE;
+}
 void display(void) {
 	
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -111,23 +149,19 @@ void display(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//printf("%.2f, %.2f, %.2f \n", nx, ny, nz);
-	gluPerspective(120, 1.0f, 0.1f, 99999); // 최대 값 설정 -> 배경이 안끝나게
+	gluPerspective(60, 1.0f, 0.1f, 99999); // 최대 값 설정 -> 배경이 안끝나게
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
 	if (cameraMove) {
-		gluLookAt(nx, ny, nz, nx, ny, 0, 0, 1, 0);
+		gluLookAt(nx, ny, nz, 0, 0, kz, 0, 1, 0);
 	}
 	else {
-		gluLookAt(nx, ny, nz, 0, 0, 0, 0, 1, 0);
+		gluLookAt(nx, ny, nz, carLocationX, 0, carLocationZ, 0, 1, 0);
 	}
 	/* 기본 설정 */
-	glShadeModel(GL_SMOOTH);
-	// 깊이버퍼, 후면제거활성화
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	//glTranslatef(cam.eye.x, cam.eye.y, cam.eye.z);
+	InitLightingGL();
 
 	/* 배경 생성 */
 	setBackGround();
@@ -135,25 +169,41 @@ void display(void) {
 	/* 바닥 생성 */
 	setGround();
 	
+	/* 정지 시 속도 초기화 */
 	if (!(keyPressed[UP] || keyPressed[DOWN])) {
 		speed = 0;
 	}
-
-	/* 버스 생성 */
-	glTranslatef(carLocationX, 0, 0);
-	glTranslatef(0, 0, carLocationZ);
-	glRotatef(rotateCar, 0.0, 1.0, 0.0);
-	bus->drawBus();
-
-	/* 자동차 생성 */
-	glTranslatef(0.0, 420.0, 480.0); // 초기 세팅
-	glTranslatef(carLocationX, 0, 0);
-	glTranslatef(0, 0, carLocationZ);
 	
+	/* 버스 생성 */
+	setBus();
+
+	/* 장애물 1 생성 ( 바로 오른쪽 길 ) */
+	glTranslatef(-10, 40, 2600);
+	
+	/* 자동차 생성 */
+	//glTranslatef(0.0, 420.0, 480.0); // 초기 세팅
+
 	glRotatef(90, 0.0, 1.0, 0.0);
-	glRotatef(rotateCar, 0.0, 1.0, 0.0);
-	glScalef(0.8, 1.5, 1.5);
-	//car->drawCar();
+	glScalef(0.4, 0.75, 0.75);
+	car->drawCar();
+	
+	/* 패배 요인 */
+	if (carLocationZ < -5500 || carLocationZ > 500) { // 앞뒤 벗어난 기준
+		printf("failed! \n");
+	}
+	if (carLocationX > 4000 || carLocationX < -3000) { // 좌우 벗어난 기준
+		printf("failed! \n");
+	}
+	/* 승리 요인 */
+	if(carLocationX > 3600 && carLocationX < 3700) { // 승리조건 X축
+		if (carLocationZ > 1 && carLocationZ < 150) { // 승리조건 Z축
+			printf("success! \n");
+		}
+
+	}
+
+
+	printf("%.2f, %.2f \n", carLocationX, carLocationZ);
 	
 	glutSwapBuffers();
 }
@@ -163,27 +213,6 @@ void Init(void) {
 	glDepthFunc(GL_LEQUAL);
 	hField.Create("test2.raw", 1024, 1024);
 }
-
-void mouseMovement(int x, int y) {
-	int diffx = x - lastx;
-	int diffy = y - lasty;
-	lastx = x;
-	lasty = y;
-	xrot += (float)diffy;
-	yrot += (float)diffx;
-}
-
-/* 마우스 클릭 이벤트 */
-/*
-void MyMouseClick(GLint Button, GLint State, GLint x, GLint y)
-{
-	if (Button == GLUT_LEFT_BUTTON && State == GLUT_DOWN)
-	{
-		TopLeftX = x;
-		TopLeftY = y;
-	}
-}
-*/
 
 /* 마우스 이동 */
 void notPress(int x, int y) {
@@ -203,8 +232,8 @@ void pressMouse(int x, int y) {
 		return;
 	}
 
-	nx = nx - (currentx - lastx);
-	ny = ny - (currenty - lasty);
+	nx = nx - ((currentx - lastx) * 6);
+	ny = ny - ((currenty - lasty) * 6);
 	
 	// 이전 좌표에 대입
 	lastx = x;
@@ -222,14 +251,14 @@ void mouse(int button, int state, int x, int y) {
 		case GLUT_WHEEL_UP: // 마우스 휠업
 			cameraMove = true;
 			printf("wheel up! \n");
-			nx += 10;
-			ny += 10;
+			nx += 100;
+			ny += 100;
 			break;
 		case GLUT_WHEEL_DOWN: // 마우스 휠 다운
 			printf("wheel down! \n");
 			cameraMove = true;
-			nx -= 10;
-			ny -= 10;
+			nx -= 100;
+			ny -= 100;
 			break;
 		}
 	glutPostRedisplay();
@@ -263,43 +292,49 @@ void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
 	xp = -sin(getRadian(rotateCar));
 	zp = -cos(getRadian(rotateCar));
 
+	/* 반올림 */
+	xp = floorf(xp * 1000) / 1000;
+	zp = floorf(zp * 1000) / 1000;
 	if (keyPressed['1'])	glPolygonMode(GL_FRONT, GL_LINE);
 	if (keyPressed['2'])	glPolygonMode(GL_FRONT, GL_FILL);
-	/*
-	if (keyPressed[UP]) { // UP
-		carLocationZ = carLocationZ + 5;	isFront = true;	carMove = true;	printf("up \n");
+	if (keyPressed['e'])	// 줌인
+	{
+		printf("zoom in! \n");
+		kz += 100;
+		//ny += 100;
 	}
-	if (keyPressed[LEFT]) { // LEFT
-		carLocationX = carLocationX + 5;	isLeft = true;	carMove = true;	printf("left \n");
+
+	if (keyPressed['r'])	// 줌아웃
+	{
+		printf("zoom out! \n");
+		kz -= 100;
+		//ny -= 100;
 	}
-	if (keyPressed[RIGHT]) {  // RIGHT
-		carLocationX = carLocationX - 5;	isRight = true; carMove = true;	printf("right \n");
-	}
-	if (keyPressed[DOWN]) {  // DOWN
-		carLocationZ = carLocationZ - 5;	isBack = true; carMove = true;	printf("down \n");
-	}
-	*/
+
 	if (keyPressed[UP] || keyPressed[DOWN] || keyPressed[LEFT] || keyPressed[RIGHT]) {
 		carMove = true;
 		//rotateCar = rotateCar % 360;
 	}
 
 	if (keyPressed[LEFT]) {
-		rotateCar = rotateCar + 2;
+		rotateCar++;
 
-		/*
+		
 		cout <<"rotate : " << rotateCar << endl;
 		cout << "xp : " << xp << endl;
 		cout << "zp : " << zp << endl;
-		cout << "carLocationX : " << carLocationX << endl;
-		cout << "carLocationZ : " << carLocationZ << endl;
+		//cout << "carLocationX : " << carLocationX << endl;
+		//cout << "carLocationZ : " << carLocationZ << endl;
 		//		carLocationX = carLocationX - ((float)(tan(rotateCar) * 2));
 		isLeft = true;
-		*/
+		
 		//printf("left \n");
 	}
 	if (keyPressed[RIGHT]) {
-		rotateCar = rotateCar - 2;
+		rotateCar--;
+		cout << "rotate : " << rotateCar << endl;
+		cout << "xp : " << xp << endl;
+		cout << "zp : " << zp << endl;
 		//carLocationX = carLocationX + (rotateCar / 2);
 		//carLocationX = carLocationX + ((float)(tan(rotateCar) * 2));
 		isRight = true;
@@ -308,7 +343,7 @@ void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
 	}
 
 	if (keyPressed[UP]) {  // up은 -
-		speed += 1;
+		speed += 0.05;
 		printf("%.2f \n", speed);
 
 		/* 진행 방향에 따른 위치 이동 */
@@ -322,47 +357,18 @@ void Idle() {//해당키가 눌려있는지 지속적으로 검사해 다중입력을 할수 있게 한다
 		cout << "carLocationX : " << carLocationX << endl;
 		cout << "carLocationZ : " << carLocationZ << endl;
 		*/
-		//printf("%.2f \n", carLocationZ);
-
-		/*
-		printf("%.2f \n", speed);
-		if (rotateCar > 90 && rotateCar < 270) {
-			carLocationZ = carLocationZ + speed;
-		}
-		else {
-			//carLocationZ = carLocationZ - ((float)(tan(rotateCar) * speed));
-			carLocationZ = carLocationZ - speed;
-		}
-		if(carLocationX != 0)
-			carLocationX = carLocationX - ((float)(tan(rotateCar) * speed));
-		isFront = true;
-		*/
-		//printf("up \n");
 	}
 	if (keyPressed[DOWN]) {
-		speed -= 1;
+		speed -= 0.05;
 		//printf("%.2f \n", speed);
 
 		/* 진행 방향에 따른 위치 이동 */
 		carLocationX = carLocationX + (xp * speed);
 		carLocationZ = carLocationZ + (zp * speed);
-		/*
-		if (rotateCar > 90 && rotateCar < 270) {
-			carLocationZ = carLocationZ - speed;
-		}
-		else {
-			carLocationZ = carLocationZ + speed;
-		}
-		carLocationZ = carLocationZ + 15;
-		if (carLocationX != 0) {
-			carLocationX = carLocationX + ((float)(tan(rotateCar) * speed));
-		}
-		*/
 		isBack = true;
 		
 		//printf("down \n");
 	}
-	//if (cam.eye.y<terrain->getHeight(cam.eye.x, cam.eye.z)) { cam.slide(0, 1.0, 0); }// 간단한 Colision Detection 지표면 아래로 카메라가 내려갈때는 지표면 위로 유지시킴
 	
 	else { 
 		//speed = 0;
@@ -417,25 +423,6 @@ void pressKey(int key, int x, int y) {
 		nz -= 50;
 		//cam.roll(-0.5);
 		break;
-		/*
-	case GLUT_KEY_UP: // 앞으로 이동
-		keyPressed[72] = true;
-		//nz += 50;
-		break;
-	case GLUT_KEY_DOWN: // 뒤로 이동
-		keyPressed[80] = true;
-		
-		//nz -= 50;
-		break;
-	case GLUT_KEY_LEFT: // 왼쪽 이동
-		keyPressed[75] = true;
-		//nx += 50;
-		break;
-	case GLUT_KEY_RIGHT: // 오른쪽 이동
-		keyPressed[77] = true;
-		//nx -= 50;
-		break;
-		*/
 	}
 	
 	glutPostRedisplay();// 다시그리기
@@ -464,7 +451,7 @@ int main(int argc, char **argv) {
 	bus = new Bus();
 	skybox = new Skybox();
 	// Terrain, Skybox객체
-	terrain = new Terrain("testtest.raw", "down.bmp", 1024, 1024);
+	terrain = new Terrain("testtest.raw", "area1.bmp", 1024, 1024);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutMainLoop();
