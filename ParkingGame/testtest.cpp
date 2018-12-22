@@ -2,6 +2,7 @@
 #include <fstream>
 #include <assert.h>
 
+#include <time.h>
 #include "bus.h"
 #include "camera.h"
 #include "heightfield.h"
@@ -119,7 +120,7 @@ int InitLightingGL() {
 	/* Lighting */
 	GLfloat ambientLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	GLfloat diffuseLight[] = { 0.9f, 0.9f, 0.0f, 1.0f };
-	GLfloat lightPos[] = { 0.0f, 2500.0f, 0.0f, 1.0f };
+	GLfloat lightPos[] = { 0.0f, 3000.0f, 0.0f, 1.0f };
 	GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat specref[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glEnable(GL_LIGHTING); // GL_LIGHTING으로 사용한다고 설정.
@@ -140,6 +141,13 @@ int InitLightingGL() {
 
 	return TRUE;
 }
+
+void dispose() {//프로그램 종료시 객체반환
+	delete terrain;
+	delete skybox;
+	delete &cam;
+}
+
 void display(void) {
 	
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -178,10 +186,21 @@ void display(void) {
 	setBus();
 
 	/* 장애물 1 생성 ( 바로 오른쪽 길 ) */
-	glTranslatef(-10, 40, 2600);
+	glPushMatrix();
+	glTranslatef(-10, 40, 1800);
+	glScalef(1.0, 1.0, 3.0);
+	bus->drawWall();
+	glPopMatrix();
 	
+	/* 장애물 2 생성 ( 바로 윗 길 ) */
+	glPushMatrix();
+	glTranslatef(-800, 40, -400);
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glScalef(1.0, 1.0, 5.0);
+	bus->drawWall();
+	glPopMatrix();
 	/* 자동차 생성 */
-	//glTranslatef(0.0, 420.0, 480.0); // 초기 세팅
+	glTranslatef(3100, 40, 1800);
 
 	glRotatef(90, 0.0, 1.0, 0.0);
 	glScalef(0.4, 0.75, 0.75);
@@ -190,20 +209,37 @@ void display(void) {
 	/* 패배 요인 */
 	if (carLocationZ < -5500 || carLocationZ > 500) { // 앞뒤 벗어난 기준
 		printf("failed! \n");
+		Sleep(3000);
+		exit(0);
 	}
 	if (carLocationX > 4000 || carLocationX < -3000) { // 좌우 벗어난 기준
 		printf("failed! \n");
+		Sleep(3000);
+		exit(0);
 	}
 	/* 승리 요인 */
 	if(carLocationX > 3600 && carLocationX < 3700) { // 승리조건 X축
 		if (carLocationZ > 1 && carLocationZ < 150) { // 승리조건 Z축
 			printf("success! \n");
+			Sleep(15000);
+			exit(0);
 		}
 
 	}
 
+	
+	/* 충돌 */
+	
+	if (carLocationZ < -2400 && carLocationZ > -3360) { // 충돌조건
+		if (carLocationX > -2100 && carLocationX < 1750) { // 승리조건 Z축
+			printf("crush ! \n");
+			Sleep(3000);
+			exit(0);
+		}
 
-	printf("%.2f, %.2f \n", carLocationX, carLocationZ);
+	}
+	
+	//printf("%.2f, %.2f \n", carLocationX, carLocationZ);
 	
 	glutSwapBuffers();
 }

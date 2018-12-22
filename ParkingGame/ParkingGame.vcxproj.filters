@@ -24,15 +24,6 @@
     <ClInclude Include="camera.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ground.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Downloads\Dx11Terrain_01\TerrainClass.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="heightfield.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\..\Downloads\OpenGL-Skybox-master\OpenGL-Skybox-master\OpenGL-Skybox\OpenGL-Skybox\terrain.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -45,21 +36,15 @@
     <ClInclude Include="bus.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="heightfield.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="skybox.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ground.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Downloads\Dx11Terrain_01\TerrainClass.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="heightfield.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="testtest.cpp">
@@ -75,6 +60,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="bus.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="heightfield.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

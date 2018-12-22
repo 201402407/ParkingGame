@@ -4,7 +4,7 @@ public:
 	Bus();
 	~Bus();
 	void drawBus();
-
+	void drawWall();
 	AUX_RGBImageRec *textureImg[6];
 private:
 #define PI 3.1492
@@ -19,5 +19,12 @@ private:
 	void busFront();
 	void busBack();
 	void busBottom();
+
+	void wallRight();
+	void wallLeft();
+	void wallTop();
+	void wallFront();
+	void wallBack();
+	void wallBottom();
 };
 
